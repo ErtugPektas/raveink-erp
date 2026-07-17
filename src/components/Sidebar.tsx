@@ -22,7 +22,7 @@ const navItems = [
   { href: "/customers",    icon: Users,           label: "Müşteriler" },
   { href: "/artists",      icon: UserCog,         label: "Sanatçılar" },
   { href: "/finance",      icon: Wallet,          label: "Finans" },
-  { href: "/inventory",    icon: Package,         label: "Stok",        disabled: true },
+  { href: "/inventory",    icon: Package,         label: "Stok" },
   { href: "/campaigns",    icon: Megaphone,       label: "Kampanyalar" },
   { href: "/reports",      icon: BarChart3,       label: "Raporlar",    disabled: true },
 ];
