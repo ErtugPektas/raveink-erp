@@ -21,7 +21,7 @@ const navItems = [
   { href: "/appointments", icon: CalendarDays,    label: "Randevular" },
   { href: "/customers",    icon: Users,           label: "Müşteriler" },
   { href: "/artists",      icon: UserCog,         label: "Sanatçılar" },
-  { href: "/finance",      icon: Wallet,          label: "Finans",      disabled: true },
+  { href: "/finance",      icon: Wallet,          label: "Finans" },
   { href: "/inventory",    icon: Package,         label: "Stok",        disabled: true },
   { href: "/campaigns",    icon: Megaphone,       label: "Kampanyalar" },
   { href: "/reports",      icon: BarChart3,       label: "Raporlar",    disabled: true },

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
-import { Plus, Search, X, Phone, MessageCircle, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import { Plus, Search, X, Phone, MessageCircle, ChevronLeft, ChevronRight, Loader2, Printer } from "lucide-react";
 import { format, addDays, startOfWeek, isSameDay, parseISO } from "date-fns";
 import { tr } from "date-fns/locale";
 
@@ -120,6 +120,22 @@ export default function AppointmentsPage() {
     if (!error) {
       setAppointments(prev => prev.map(a => a.id === id ? { ...a, status } : a));
       if (detailAppt?.id === id) setDetailAppt(prev => prev ? { ...prev, status } : null);
+
+      // Auto financial record on done seans
+      if (status === "done") {
+        const appt = appointments.find(a => a.id === id);
+        if (appt) {
+          await supabase.from("transactions").insert({
+            type: "income",
+            category: "session",
+            payment_method: "cash",
+            amount: Number(appt.price),
+            description: `${appt.customers?.name || "Bilinmeyen Müşteri"} - ${appt.service} Seansı`,
+            date: appt.date,
+            appointment_id: id,
+          });
+        }
+      }
     }
   };
 
@@ -289,14 +305,30 @@ export default function AppointmentsPage() {
                           </td>
                           <td onClick={e => e.stopPropagation()}>
                             {a.customers && (
-                              <a
-                                href={waLink(a.customers.phone, a.customers.name, new Date(a.date).toLocaleDateString("tr-TR"), a.time)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ color: "#4ade80", display: "inline-flex", alignItems: "center" }}
-                              >
-                                <MessageCircle size={15} />
-                              </a>
+                              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                                <a
+                                  href={waLink(a.customers.phone, a.customers.name, new Date(a.date).toLocaleDateString("tr-TR"), a.time)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  title="WhatsApp"
+                                  style={{ color: "#4ade80", display: "inline-flex", alignItems: "center" }}
+                                >
+                                  <MessageCircle size={15} />
+                                </a>
+                                {a.status === "done" && (
+                                  <a
+                                    href={`/finance?print=${a.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title="Makbuz Yazdır"
+                                    style={{ color: "rgba(255,255,255,0.45)", display: "inline-flex", alignItems: "center" }}
+                                    onMouseEnter={e => (e.currentTarget.style.color = "#C41E3A")}
+                                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
+                                  >
+                                    <Printer size={15} />
+                                  </a>
+                                )}
+                              </div>
                             )}
                           </td>
                         </tr>
