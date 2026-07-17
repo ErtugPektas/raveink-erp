@@ -257,86 +257,161 @@ export default function AppointmentsPage() {
 
             {/* List View */}
             {view === "list" && (
-              <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-                <table className="erp-table">
-                  <thead>
-                    <tr>
-                      <th>Müşteri</th>
-                      <th>Sanatçı</th>
-                      <th>Hizmet</th>
-                      <th>Tarih</th>
-                      <th>Saat</th>
-                      <th>Ücret</th>
-                      <th>Durum</th>
-                      <th>İşlem</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.length === 0 ? (
+              <>
+                {/* Desktop View Table */}
+                <div className="hidden md:block card" style={{ padding: 0, overflow: "hidden" }}>
+                  <table className="erp-table">
+                    <thead>
                       <tr>
-                        <td colSpan={8} style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
-                          Randevu bulunamadı
-                        </td>
+                        <th>Müşteri</th>
+                        <th>Sanatçı</th>
+                        <th>Hizmet</th>
+                        <th>Tarih</th>
+                        <th>Saat</th>
+                        <th>Ücret</th>
+                        <th>Durum</th>
+                        <th>İşlem</th>
                       </tr>
-                    ) : (
-                      filtered.map(a => (
-                        <tr key={a.id} style={{ cursor: "pointer" }} onClick={() => setDetailAppt(a)}>
-                          <td>
-                            <div style={{ fontWeight: 600, color: "#fff", fontSize: 12 }}>{a.customers?.name || "Bilinmeyen Müşteri"}</div>
-                            <div style={{ fontSize: 11, color: "var(--text-muted)" }}>{a.customers?.phone || "-"}</div>
-                          </td>
-                          <td style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{a.artists?.name || "-"}</td>
-                          <td style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{a.service}</td>
-                          <td style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
-                            {new Date(a.date).toLocaleDateString("tr-TR", { day: "2-digit", month: "long" })}
-                          </td>
-                          <td style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{a.time}</td>
-                          <td style={{ fontSize: 12, fontWeight: 700, color: "#4ade80" }}>₺{Number(a.price).toLocaleString("tr-TR")}</td>
-                          <td>
-                            <select
-                              className={`badge badge-${a.status}`}
-                              style={{ background: STATUS_BG[a.status], cursor: "pointer", border: "none", outline: "none" }}
-                              value={a.status}
-                              onClick={e => e.stopPropagation()}
-                              onChange={e => { e.stopPropagation(); updateStatus(a.id, e.target.value as AppointmentStatus); }}
-                            >
-                              {STATUSES.map(s => <option key={s} value={s} style={{ background: "#111", color: "#fff" }}>{STATUS_LABELS[s]}</option>)}
-                            </select>
-                          </td>
-                          <td onClick={e => e.stopPropagation()}>
-                            {a.customers && (
-                              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                                <a
-                                  href={waLink(a.customers.phone, a.customers.name, new Date(a.date).toLocaleDateString("tr-TR"), a.time)}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  title="WhatsApp"
-                                  style={{ color: "#4ade80", display: "inline-flex", alignItems: "center" }}
-                                >
-                                  <MessageCircle size={15} />
-                                </a>
-                                {a.status === "done" && (
-                                  <a
-                                    href={`/finance?print=${a.id}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    title="Makbuz Yazdır"
-                                    style={{ color: "rgba(255,255,255,0.45)", display: "inline-flex", alignItems: "center" }}
-                                    onMouseEnter={e => (e.currentTarget.style.color = "#C41E3A")}
-                                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
-                                  >
-                                    <Printer size={15} />
-                                  </a>
-                                )}
-                              </div>
-                            )}
+                    </thead>
+                    <tbody>
+                      {filtered.length === 0 ? (
+                        <tr>
+                          <td colSpan={8} style={{ textAlign: "center", padding: "2rem", color: "var(--text-muted)" }}>
+                            Randevu bulunamadı
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                      ) : (
+                        filtered.map(a => (
+                          <tr key={a.id} style={{ cursor: "pointer" }} onClick={() => setDetailAppt(a)}>
+                            <td>
+                              <div style={{ fontWeight: 600, color: "#fff", fontSize: 12 }}>{a.customers?.name || "Bilinmeyen Müşteri"}</div>
+                              <div style={{ fontSize: 11, color: "var(--text-muted)" }}>{a.customers?.phone || "-"}</div>
+                            </td>
+                            <td style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{a.artists?.name || "-"}</td>
+                            <td style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{a.service}</td>
+                            <td style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>
+                              {new Date(a.date).toLocaleDateString("tr-TR", { day: "2-digit", month: "long" })}
+                            </td>
+                            <td style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{a.time}</td>
+                            <td style={{ fontSize: 12, fontWeight: 700, color: "#4ade80" }}>₺{Number(a.price).toLocaleString("tr-TR")}</td>
+                            <td>
+                              <select
+                                className={`badge badge-${a.status}`}
+                                style={{ background: STATUS_BG[a.status], cursor: "pointer", border: "none", outline: "none" }}
+                                value={a.status}
+                                onClick={e => e.stopPropagation()}
+                                onChange={e => { e.stopPropagation(); updateStatus(a.id, e.target.value as AppointmentStatus); }}
+                              >
+                                {STATUSES.map(s => <option key={s} value={s} style={{ background: "#111", color: "#fff" }}>{STATUS_LABELS[s]}</option>)}
+                              </select>
+                            </td>
+                            <td onClick={e => e.stopPropagation()}>
+                              {a.customers && (
+                                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                                  <a
+                                    href={waLink(a.customers.phone, a.customers.name, new Date(a.date).toLocaleDateString("tr-TR"), a.time)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    title="WhatsApp"
+                                    style={{ color: "#4ade80", display: "inline-flex", alignItems: "center" }}
+                                  >
+                                    <MessageCircle size={15} />
+                                  </a>
+                                  {a.status === "done" && (
+                                    <a
+                                      href={`/finance?print=${a.id}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      title="Makbuz Yazdır"
+                                      style={{ color: "rgba(255,255,255,0.45)", display: "inline-flex", alignItems: "center" }}
+                                      onMouseEnter={e => (e.currentTarget.style.color = "#C41E3A")}
+                                      onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
+                                    >
+                                      <Printer size={15} />
+                                    </a>
+                                  )}
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile View Cards */}
+                <div className="block md:hidden" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                  {filtered.length === 0 ? (
+                    <div className="card" style={{ textAlign: "center", color: "var(--text-muted)", padding: "2rem" }}>
+                      Randevu bulunamadı
+                    </div>
+                  ) : (
+                    filtered.map(a => (
+                      <div
+                        key={a.id}
+                        className="card"
+                        style={{
+                          padding: "1rem",
+                          borderLeft: `4px solid ${a.artists?.color || "var(--border)"}`,
+                          cursor: "pointer"
+                        }}
+                        onClick={() => setDetailAppt(a)}
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
+                          <div>
+                            <div style={{ fontWeight: 700, color: "#fff", fontSize: 13 }}>{a.customers?.name || "Bilinmeyen Müşteri"}</div>
+                            <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 2 }}>{a.customers?.phone || "-"}</div>
+                          </div>
+                          <select
+                            className={`badge badge-${a.status}`}
+                            style={{ background: STATUS_BG[a.status], cursor: "pointer", border: "none", outline: "none", fontSize: 10, padding: "2px 8px" }}
+                            value={a.status}
+                            onClick={e => e.stopPropagation()}
+                            onChange={e => { e.stopPropagation(); updateStatus(a.id, e.target.value as AppointmentStatus); }}
+                          >
+                            {STATUSES.map(s => <option key={s} value={s} style={{ background: "#111", color: "#fff" }}>{STATUS_LABELS[s]}</option>)}
+                          </select>
+                        </div>
+                        
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, color: "rgba(255,255,255,0.6)", marginTop: 10 }}>
+                          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                            <span>📅 {new Date(a.date).toLocaleDateString("tr-TR", { day: "2-digit", month: "short" })}</span>
+                            <span>🕒 {a.time}</span>
+                            <span>🎨 {a.artists?.name || "-"}</span>
+                          </div>
+                          <div style={{ fontWeight: 700, color: "#4ade80", fontSize: 12 }}>₺{Number(a.price).toLocaleString("tr-TR")}</div>
+                        </div>
+
+                        {a.customers && (
+                          <div style={{ display: "flex", gap: 8, borderTop: "1px solid rgba(255,255,255,0.05)", marginTop: 10, paddingTop: 8 }} onClick={e => e.stopPropagation()}>
+                            <a
+                              href={waLink(a.customers.phone, a.customers.name, new Date(a.date).toLocaleDateString("tr-TR"), a.time)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-ghost"
+                              style={{ flex: 1, padding: "6px 8px", fontSize: 11, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 36 }}
+                            >
+                              <MessageCircle size={14} style={{ color: "#4ade80" }} /> Hatırlat
+                            </a>
+                            {a.status === "done" && (
+                              <a
+                                href={`/finance?print=${a.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn btn-ghost"
+                                style={{ padding: "6px 12px", display: "inline-flex", alignItems: "center", justifyContent: "center", minHeight: 36 }}
+                              >
+                                <Printer size={14} />
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
             )}
 
             {/* Week View */}

@@ -251,64 +251,125 @@ export default function CustomersPage() {
                 {activeTab === "active" ? "Aktif müşteri bulunamadı." : "Arşivlenmiş müşteri bulunamadı."}
               </div>
             ) : (
-              <table className="erp-table">
-                <thead>
-                  <tr>
-                    <th>Müşteri Bilgileri</th>
-                    <th>İletişim</th>
-                    <th>Notlar</th>
-                    <th style={{ textAlign: "right" }}>İşlemler</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <>
+                {/* Desktop View Table */}
+                <div className="hidden md:block">
+                  <table className="erp-table">
+                    <thead>
+                      <tr>
+                        <th>Müşteri Bilgileri</th>
+                        <th>İletişim</th>
+                        <th>Notlar</th>
+                        <th style={{ textAlign: "right" }}>İşlemler</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredCustomers.map(c => (
+                        <tr
+                          key={c.id}
+                          onClick={() => setSelectedCustomer(c)}
+                          style={{
+                            cursor: "pointer",
+                            background: selectedCustomer?.id === c.id ? "rgba(196,30,58,0.06)" : "transparent"
+                          }}
+                        >
+                          <td>
+                            <div style={{ fontWeight: 600, color: "#fff" }}>{c.name}</div>
+                            {c.birthdate && (
+                              <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 2 }}>
+                                🎂 {c.birthdate}
+                              </div>
+                            )}
+                          </td>
+                          <td>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}>📞 {c.phone}</span>
+                              {c.email && <span style={{ fontSize: 11, color: "var(--text-muted)" }}>✉️ {c.email}</span>}
+                            </div>
+                          </td>
+                          <td style={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12, color: "var(--text-muted)" }}>
+                            {c.notes || "-"}
+                          </td>
+                          <td style={{ textAlign: "right" }}>
+                            <div style={{ display: "flex", gap: "0.25rem", justifyContent: "flex-end" }} onClick={e => e.stopPropagation()}>
+                              <button
+                                className="btn btn-ghost"
+                                style={{ padding: "6px 8px" }}
+                                title={c.archived ? "Arşivden Çıkar (Aktif Et)" : "İşlem Bitti / Arşivle"}
+                                onClick={e => toggleArchive(c, e)}
+                              >
+                                <Archive size={12} style={{ color: c.archived ? "#4ade80" : "rgba(255,255,255,0.4)" }} />
+                              </button>
+                              <button className="btn btn-ghost" style={{ padding: "6px 8px" }} onClick={e => handleOpenEdit(c, e)}>
+                                <Pencil size={12} />
+                              </button>
+                              <button className="btn btn-ghost" style={{ padding: "6px 8px", color: "#C41E3A" }} onClick={() => setDeleteConfirm(c.id)}>
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile View Cards */}
+                <div className="block md:hidden" style={{ display: "flex", flexDirection: "column", gap: "0.5rem", padding: "0.5rem" }}>
                   {filteredCustomers.map(c => (
-                    <tr
+                    <div
                       key={c.id}
+                      className="card"
                       onClick={() => setSelectedCustomer(c)}
                       style={{
-                        cursor: "pointer",
-                        background: selectedCustomer?.id === c.id ? "rgba(196,30,58,0.06)" : "transparent"
+                        padding: "1rem",
+                        background: selectedCustomer?.id === c.id ? "rgba(196,30,58,0.06)" : "var(--bg-card)",
+                        border: selectedCustomer?.id === c.id ? "1px solid var(--border-red)" : "1px solid var(--border)",
+                        cursor: "pointer"
                       }}
                     >
-                      <td>
-                        <div style={{ fontWeight: 600, color: "#fff" }}>{c.name}</div>
-                        {c.birthdate && (
-                          <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 2 }}>
-                            🎂 {c.birthdate}
-                          </div>
-                        )}
-                      </td>
-                      <td>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}>📞 {c.phone}</span>
-                          {c.email && <span style={{ fontSize: 11, color: "var(--text-muted)" }}>✉️ {c.email}</span>}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
+                        <div>
+                          <div style={{ fontWeight: 700, color: "#fff", fontSize: 13 }}>{c.name}</div>
+                          {c.birthdate && <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 2 }}>🎂 {c.birthdate}</div>}
                         </div>
-                      </td>
-                      <td style={{ maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12, color: "var(--text-muted)" }}>
-                        {c.notes || "-"}
-                      </td>
-                      <td style={{ textAlign: "right" }}>
-                        <div style={{ display: "flex", gap: "0.25rem", justifyContent: "flex-end" }} onClick={e => e.stopPropagation()}>
+                        <div style={{ display: "flex", gap: 6 }} onClick={e => e.stopPropagation()}>
                           <button
                             className="btn btn-ghost"
-                            style={{ padding: "6px 8px" }}
-                            title={c.archived ? "Arşivden Çıkar (Aktif Et)" : "İşlem Bitti / Arşivle"}
+                            style={{ padding: "4px 8px", minHeight: 28 }}
                             onClick={e => toggleArchive(c, e)}
                           >
                             <Archive size={12} style={{ color: c.archived ? "#4ade80" : "rgba(255,255,255,0.4)" }} />
                           </button>
-                          <button className="btn btn-ghost" style={{ padding: "6px 8px" }} onClick={e => handleOpenEdit(c, e)}>
+                          <button
+                            className="btn btn-ghost"
+                            style={{ padding: "4px 8px", minHeight: 28 }}
+                            onClick={e => handleOpenEdit(c, e)}
+                          >
                             <Pencil size={12} />
                           </button>
-                          <button className="btn btn-ghost" style={{ padding: "6px 8px", color: "#C41E3A" }} onClick={() => setDeleteConfirm(c.id)}>
+                          <button
+                            className="btn btn-ghost"
+                            style={{ padding: "4px 8px", color: "#C41E3A", minHeight: 28 }}
+                            onClick={() => setDeleteConfirm(c.id)}
+                          >
                             <Trash2 size={12} />
                           </button>
                         </div>
-                      </td>
-                    </tr>
+                      </div>
+                      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", marginTop: 8, display: "flex", flexWrap: "wrap", gap: 10 }}>
+                        <span>📞 {c.phone}</span>
+                        {c.email && <span>✉️ {c.email}</span>}
+                      </div>
+                      {c.notes && (
+                        <div style={{ fontSize: 10, color: "var(--text-muted)", marginTop: 8, background: "rgba(255,255,255,0.02)", padding: 6, borderRadius: 2 }}>
+                          📝 {c.notes}
+                        </div>
+                      )}
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              </>
             )}
           </div>
 
