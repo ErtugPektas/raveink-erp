@@ -24,7 +24,7 @@ const navItems = [
   { href: "/finance",      icon: Wallet,          label: "Finans" },
   { href: "/inventory",    icon: Package,         label: "Stok" },
   { href: "/campaigns",    icon: Megaphone,       label: "Kampanyalar" },
-  { href: "/reports",      icon: BarChart3,       label: "Raporlar",    disabled: true },
+  { href: "/reports",      icon: BarChart3,       label: "Raporlar" },
 ];
 
 export default function Sidebar() {
@@ -54,13 +54,12 @@ export default function Sidebar() {
 
       {/* Nav */}
       <nav style={{ flex: 1, padding: "0.75rem 0.5rem", display: "flex", flexDirection: "column", gap: 2 }}>
-        {navItems.map(({ href, icon: Icon, label, disabled }) => {
+        {navItems.map(({ href, icon: Icon, label }) => {
           const active = pathname === href || pathname.startsWith(href + "/");
           return (
             <Link
               key={href}
-              href={disabled ? "#" : href}
-              onClick={e => disabled && e.preventDefault()}
+              href={href}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -70,26 +69,24 @@ export default function Sidebar() {
                 fontSize: 12,
                 fontFamily: "Montserrat, sans-serif",
                 fontWeight: active ? 600 : 400,
-                color: disabled
-                  ? "rgba(255,255,255,0.2)"
-                  : active
+                color: active
                   ? "#fff"
                   : "rgba(255,255,255,0.5)",
                 background: active ? "rgba(196,30,58,0.12)" : "transparent",
                 border: active ? "1px solid rgba(196,30,58,0.25)" : "1px solid transparent",
-                cursor: disabled ? "not-allowed" : "pointer",
+                cursor: "pointer",
                 transition: "all 0.15s",
                 textDecoration: "none",
                 position: "relative",
               }}
               onMouseEnter={e => {
-                if (!active && !disabled) {
+                if (!active) {
                   (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
                   (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.8)";
                 }
               }}
               onMouseLeave={e => {
-                if (!active && !disabled) {
+                if (!active) {
                   (e.currentTarget as HTMLElement).style.background = "transparent";
                   (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.5)";
                 }
@@ -97,11 +94,6 @@ export default function Sidebar() {
             >
               <Icon size={15} />
               <span style={{ flex: 1 }}>{label}</span>
-              {disabled && (
-                <span style={{ fontSize: 9, letterSpacing: "0.05em", color: "rgba(255,255,255,0.15)", fontWeight: 600 }}>
-                  YAKINDA
-                </span>
-              )}
               {active && <ChevronRight size={12} style={{ color: "#C41E3A" }} />}
             </Link>
           );

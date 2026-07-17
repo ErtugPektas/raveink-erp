@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import {
   Plus, Pencil, Trash2, X, Search, Loader2,
-  User, Phone, Mail, Calendar, StickyNote, Award
+  User, Phone, Mail, Calendar, StickyNote, Award, Archive
 } from "lucide-react";
 
 interface Customer {
@@ -14,6 +14,7 @@ interface Customer {
   email: string | null;
   birthdate: string | null;
   notes: string | null;
+  archived: boolean;
   created_at: string;
 }
 
@@ -42,6 +43,7 @@ export default function CustomersPage() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [customerHistory, setCustomerHistory] = useState<Appointment[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [activeTab, setActiveTab] = useState<"active" | "archived">("active");
 
   // Modal states
   const [showModal, setShowModal] = useState(false);
@@ -87,12 +89,15 @@ export default function CustomersPage() {
   }, [selectedCustomer]);
 
   const filteredCustomers = useMemo(() => {
-    return customers.filter(c =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.phone.includes(search) ||
-      (c.email && c.email.toLowerCase().includes(search.toLowerCase()))
-    );
-  }, [customers, search]);
+    return customers.filter(c => {
+      const matchSearch =
+        c.name.toLowerCase().includes(search.toLowerCase()) ||
+        c.phone.includes(search) ||
+        (c.email && c.email.toLowerCase().includes(search.toLowerCase()));
+      const matchTab = activeTab === "active" ? !c.archived : c.archived;
+      return matchSearch && matchTab;
+    });
+  }, [customers, search, activeTab]);
 
   const stats = useMemo(() => {
     const totalVisits = customerHistory.length;
@@ -151,6 +156,27 @@ export default function CustomersPage() {
     }
   };
 
+  const toggleArchive = async (c: Customer, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newArchived = !c.archived;
+
+    // Optimistic UI update
+    setCustomers(prev => prev.map(x => x.id === c.id ? { ...x, archived: newArchived } : x));
+    if (selectedCustomer?.id === c.id) {
+      setSelectedCustomer({ ...selectedCustomer, archived: newArchived });
+    }
+
+    const { error } = await supabase
+      .from("customers")
+      .update({ archived: newArchived })
+      .eq("id", c.id);
+
+    if (error) {
+      alert("Arşivleme hatası: " + error.message);
+      loadCustomers();
+    }
+  };
+
   const handleDelete = async (id: string) => {
     const { error } = await supabase.from("customers").delete().eq("id", id);
     if (!error) {
@@ -181,6 +207,28 @@ export default function CustomersPage() {
           
           {/* Sol: Müşteri Listesi */}
           <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+            
+            {/* Tab Selector */}
+            <div style={{ display: "flex", borderBottom: "1px solid var(--border)" }}>
+              {(["active", "archived"] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => { setActiveTab(tab); setSelectedCustomer(null); }}
+                  style={{
+                    flex: 1, padding: "12px", border: "none", cursor: "pointer",
+                    fontFamily: "Montserrat, sans-serif", fontSize: 11, fontWeight: 700,
+                    letterSpacing: "0.05em", textTransform: "uppercase",
+                    background: activeTab === tab ? "rgba(196,30,58,0.06)" : "transparent",
+                    color: activeTab === tab ? "#C41E3A" : "rgba(255,255,255,0.4)",
+                    borderBottom: activeTab === tab ? "2px solid #C41E3A" : "2px solid transparent",
+                    transition: "all 0.15s",
+                  }}
+                >
+                  {tab === "active" ? "Aktif Müşteriler" : "Arşivlenenler (İşlemi Bitenler)"}
+                </button>
+              ))}
+            </div>
+
             <div style={{ padding: "1rem", borderBottom: "1px solid var(--border)" }}>
               <div style={{ position: "relative" }}>
                 <Search size={13} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
@@ -199,8 +247,8 @@ export default function CustomersPage() {
                 <Loader2 size={24} className="animate-spin" style={{ color: "#C41E3A" }} />
               </div>
             ) : filteredCustomers.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "3rem", color: "var(--text-muted)" }}>
-                Müşteri bulunamadı.
+              <div style={{ textAlign: "center", padding: "3rem", color: "var(--text-muted)", fontSize: 12 }}>
+                {activeTab === "active" ? "Aktif müşteri bulunamadı." : "Arşivlenmiş müşteri bulunamadı."}
               </div>
             ) : (
               <table className="erp-table">
@@ -241,6 +289,14 @@ export default function CustomersPage() {
                       </td>
                       <td style={{ textAlign: "right" }}>
                         <div style={{ display: "flex", gap: "0.25rem", justifyContent: "flex-end" }} onClick={e => e.stopPropagation()}>
+                          <button
+                            className="btn btn-ghost"
+                            style={{ padding: "6px 8px" }}
+                            title={c.archived ? "Arşivden Çıkar (Aktif Et)" : "İşlem Bitti / Arşivle"}
+                            onClick={e => toggleArchive(c, e)}
+                          >
+                            <Archive size={12} style={{ color: c.archived ? "#4ade80" : "rgba(255,255,255,0.4)" }} />
+                          </button>
                           <button className="btn btn-ghost" style={{ padding: "6px 8px" }} onClick={e => handleOpenEdit(c, e)}>
                             <Pencil size={12} />
                           </button>
@@ -264,7 +320,9 @@ export default function CustomersPage() {
                   <h3 className="font-display text-base font-bold text-white" style={{ marginBottom: 4 }}>
                     {selectedCustomer.name}
                   </h3>
-                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>Müşteri Detay Kartı</div>
+                  <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
+                    Müşteri Detay Kartı {selectedCustomer.archived && <span style={{ color: "#C41E3A", fontWeight: 700 }}>(ARŞİVLENDİ)</span>}
+                  </div>
                 </div>
 
                 <div className="divider" />

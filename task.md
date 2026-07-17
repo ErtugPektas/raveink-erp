@@ -18,14 +18,18 @@
 ## FAZ 3 — Kasa & Finansal Takip (Tamamlandı)
 - [x] Supabase Tablosunun Oluşturulması (`transactions`)
 - [x] Kasa & Raporlama Sayfası (`/finance`)
-  - [x] Net Kar/Zarar ve Kasa Dağılım Kartları (Nakit, Kart, Havale)
-  - [x] Recharts ile 6 Aylık Gelir/Gider Karşılaştırma Grafiği
-  - [x] Gelir / Gider Manuel Kayıt Girişi
 - [x] Randevu Entegrasyonu (Randevu durumu "Tamamlandı" yapıldığında kasaya otomatik gelir girişi)
 - [x] PDF Seans Makbuzu (Seçilen tamamlanmış seanslar için premium, siyah/kırmızı tasarımlı makbuz çıktısı / PDF kaydetme)
 
-## FAZ 4 — Stok & Malzeme Yönetimi
-- [ ] Supabase Tablosunun Oluşturulması (`inventory`)
-- [ ] Envanter Sayfası (`/inventory`)
-  - [ ] Malzeme Giriş/Çıkış Takibi
-  - [ ] Kritik Eşik Limit Uyarı Sistemi
+## FAZ 4 — Stok & Malzeme Yönetimi (Tamamlandı)
+- [x] Supabase Tablosunun Oluşturulması (`inventory`)
+- [x] Envanter Sayfası (`/inventory`)
+  - [x] Malzeme Giriş/Çıkış Takibi
+  - [x] Hızlı +/- Miktar Güncelleme Butonları
+  - [x] Kritik Eşik Limit Uyarı Sistemi (Miktar limitin altına düştüğünde kırmızı "KRİTİK" rozeti ve üstte uyarı sayısı)
+- [x] Navigasyon ve Sidebar Güncellemesi
+
+## FAZ 5 — Gelişmiş Raporlar & Analiz (Dashboard Detaylandırma)
+- [ ] Randevu Yoğunluk Analizi
+- [ ] Sanatçı Performans Grafikleri
+- [ ] Finansal Tahminleme
