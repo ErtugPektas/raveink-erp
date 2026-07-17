@@ -27,7 +27,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '22'
 
     - name: Install Dependencies
       run: npm install
@@ -36,20 +36,7 @@ jobs:
       run: npm run build
 
     - name: Sync Capacitor
-      run: |
-        npx cap sync android > sync-log.txt 2>&1 || (cat sync-log.txt && exit 1)
-
-    - name: Push diagnostics to Git
-      if: always()
-      run: |
-        git config --global user.name "GitHub Action Bot"
-        git config --global user.email "action@github.com"
-        git pull origin main || true
-        cp sync-log.txt diagnostics.txt || true
-        ls -la > directory-list.txt || true
-        git add diagnostics.txt directory-list.txt || true
-        git commit -m "chore: upload build diagnostics from runner" || true
-        git push origin main || true
+      run: npx cap sync android
 
     - name: Build Android APK (Debug)
       run: |
