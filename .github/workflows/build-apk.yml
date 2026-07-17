@@ -39,12 +39,17 @@ jobs:
       run: |
         npx cap sync android > sync-log.txt 2>&1 || (cat sync-log.txt && exit 1)
 
-    - name: Debug Output Logs
+    - name: Push diagnostics to Git
       if: always()
       run: |
-        cat sync-log.txt || true
-        ls -la
-        ls -la out || true
+        git config --global user.name "GitHub Action Bot"
+        git config --global user.email "action@github.com"
+        git pull origin main || true
+        cp sync-log.txt diagnostics.txt || true
+        ls -la > directory-list.txt || true
+        git add diagnostics.txt directory-list.txt || true
+        git commit -m "chore: upload build diagnostics from runner" || true
+        git push origin main || true
 
     - name: Build Android APK (Debug)
       run: |
