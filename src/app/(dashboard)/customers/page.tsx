@@ -145,6 +145,9 @@ export default function CustomersPage() {
     if (!result.error) {
       setShowModal(false);
       loadCustomers();
+    } else {
+      alert("Hata: " + result.error.message);
+      console.error(result.error);
     }
   };
 
@@ -398,7 +401,7 @@ export default function CustomersPage() {
                 </div>
                 <div>
                   <label className="label">Doğum Günü</label>
-                  <input className="input" type="date" value={form.birthdate} onChange={e => set("birthdate", e.target.value)} />
+                  <input className="input" type="text" placeholder="Örn: 14.05.1992" value={form.birthdate} onChange={e => set("birthdate", e.target.value)} />
                 </div>
               </div>
 

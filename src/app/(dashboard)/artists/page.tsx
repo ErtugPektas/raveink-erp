@@ -135,6 +135,9 @@ export default function ArtistsPage() {
     if (!result.error) {
       setShowModal(false);
       loadData();
+    } else {
+      alert("Hata: " + result.error.message);
+      console.error(result.error);
     }
   };
 
