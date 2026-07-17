@@ -36,7 +36,8 @@ jobs:
       run: npm run build
 
     - name: Sync Capacitor
-      run: npx cap sync android
+      run: |
+        npx cap sync android > sync-log.txt 2>&1 || (cat sync-log.txt && exit 1)
 
     - name: Build Android APK (Debug)
       run: |
