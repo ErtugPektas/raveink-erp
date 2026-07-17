@@ -203,7 +203,7 @@ export default function CustomersPage() {
       </div>
 
       <div className="erp-content">
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "1rem", alignItems: "start" }}>
+        <div className="grid-crm">
           
           {/* Sol: Müşteri Listesi */}
           <div className="card" style={{ padding: 0, overflow: "hidden" }}>

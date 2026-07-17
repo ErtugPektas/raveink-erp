@@ -167,10 +167,10 @@ export default function ArtistsPage() {
       </div>
 
       <div className="erp-content">
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "1rem", alignItems: "start" }}>
+        <div className="grid-crm">
 
           {/* Sol: Sanatçı Listesi */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
+          <div className="grid-artists">
             {loading ? (
               <div style={{ gridColumn: "1/-1", display: "flex", justifyContent: "center", padding: "3rem" }}>
                 <Loader2 size={24} className="animate-spin" style={{ color: "#C41E3A" }} />

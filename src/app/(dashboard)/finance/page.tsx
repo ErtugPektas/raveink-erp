@@ -323,7 +323,7 @@ export default function FinancePage() {
         </div>
 
         {/* Row 2: Graph & List */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: "1rem", alignItems: "start" }}>
+        <div className="grid-dashboard-main">
 
           {/* Grafikler */}
           <div className="card">

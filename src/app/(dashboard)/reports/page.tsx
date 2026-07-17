@@ -164,7 +164,7 @@ export default function ReportsPage() {
             </div>
 
             {/* Grid 1: Sanatçı Performans & Yoğunluk */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
+            <div className="grid-reports-2">
               
               {/* Sanatçı Performansı */}
               <div className="card">
@@ -201,7 +201,7 @@ export default function ReportsPage() {
             </div>
 
             {/* Grid 2: Hizmet Dağılımı (Dairesel) & Performans Tablosu */}
-            <div style={{ display: "grid", gridTemplateColumns: "360px 1fr", gap: "1rem" }}>
+            <div className="grid-reports-pie">
               
               {/* Hizmet Tercih Oranları */}
               <div className="card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
