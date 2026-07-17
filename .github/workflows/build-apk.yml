@@ -42,7 +42,18 @@ jobs:
       run: |
         cd android
         chmod +x gradlew
-        ./gradlew assembleDebug
+        ./gradlew assembleDebug > gradle-log.txt 2>&1 || (cat gradle-log.txt && exit 1)
+
+    - name: Push diagnostics to Git
+      if: always()
+      run: |
+        git config --global user.name "GitHub Action Bot"
+        git config --global user.email "action@github.com"
+        git pull origin main || true
+        cp android/gradle-log.txt diagnostics.txt || true
+        git add diagnostics.txt || true
+        git commit -m "chore: upload gradle diagnostics from runner" || true
+        git push origin main || true
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
